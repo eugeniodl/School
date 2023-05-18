@@ -9,26 +9,28 @@ namespace SchoolAPI.Data
         {
 
         }
+
         public DbSet<Student> Students { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuider)
         {
-            modelBuilder.Entity<Student>().HasData(
+            modelBuider.Entity<Student>().HasData(
                 new Student()
                 {
                     StudentId = 1,
-                    StudentName = "José González"
+                    StudentName = "Norman López"
                 },
                 new Student()
                 {
                     StudentId = 2,
-                    StudentName = "María José Ramírez"
+                    StudentName = "Martha Pérez"
                 },
                 new Student()
                 {
                     StudentId = 3,
-                    StudentName = "Carlos Fonseca"
+                    StudentName = "Luis Padilla"
                 });
         }
+
     }
 }

@@ -11,8 +11,8 @@ using SchoolAPI.Data;
 namespace SchoolAPI.Migrations
 {
     [DbContext(typeof(SchoolContext))]
-    [Migration("20230518141127_AlimentarTablaStudents")]
-    partial class AlimentarTablaStudents
+    [Migration("20230518171226_AgregarBaseDatos")]
+    partial class AgregarBaseDatos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,23 +39,6 @@ namespace SchoolAPI.Migrations
                     b.HasKey("StudentId");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            StudentId = 1,
-                            StudentName = "José González"
-                        },
-                        new
-                        {
-                            StudentId = 2,
-                            StudentName = "María José Ramírez"
-                        },
-                        new
-                        {
-                            StudentId = 3,
-                            StudentName = "Carlos Fonseca"
-                        });
                 });
 #pragma warning restore 612, 618
         }
