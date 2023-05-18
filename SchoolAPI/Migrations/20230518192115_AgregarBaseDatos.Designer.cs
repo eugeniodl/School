@@ -11,7 +11,7 @@ using SchoolAPI.Data;
 namespace SchoolAPI.Migrations
 {
     [DbContext(typeof(SchoolContext))]
-    [Migration("20230518134001_AgregarBaseDatos")]
+    [Migration("20230518192115_AgregarBaseDatos")]
     partial class AgregarBaseDatos
     {
         /// <inheritdoc />

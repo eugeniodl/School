@@ -11,7 +11,7 @@ using SchoolAPI.Data;
 namespace SchoolAPI.Migrations
 {
     [DbContext(typeof(SchoolContext))]
-    [Migration("20230518141127_AlimentarTablaStudents")]
+    [Migration("20230518194917_AlimentarTablaStudents")]
     partial class AlimentarTablaStudents
     {
         /// <inheritdoc />
@@ -44,17 +44,17 @@ namespace SchoolAPI.Migrations
                         new
                         {
                             StudentId = 1,
-                            StudentName = "José González"
+                            StudentName = "Moisés Alemán"
                         },
                         new
                         {
                             StudentId = 2,
-                            StudentName = "María José Ramírez"
+                            StudentName = "Marcia Escobar"
                         },
                         new
                         {
                             StudentId = 3,
-                            StudentName = "Carlos Fonseca"
+                            StudentName = "Kevin Dávila"
                         });
                 });
 #pragma warning restore 612, 618

@@ -17,9 +17,9 @@ namespace SchoolAPI.Migrations
                 columns: new[] { "StudentId", "StudentName" },
                 values: new object[,]
                 {
-                    { 1, "José González" },
-                    { 2, "María José Ramírez" },
-                    { 3, "Carlos Fonseca" }
+                    { 1, "Moisés Alemán" },
+                    { 2, "Marcia Escobar" },
+                    { 3, "Kevin Dávila" }
                 });
         }
 

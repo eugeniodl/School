@@ -41,17 +41,17 @@ namespace SchoolAPI.Migrations
                         new
                         {
                             StudentId = 1,
-                            StudentName = "José González"
+                            StudentName = "Moisés Alemán"
                         },
                         new
                         {
                             StudentId = 2,
-                            StudentName = "María José Ramírez"
+                            StudentName = "Marcia Escobar"
                         },
                         new
                         {
                             StudentId = 3,
-                            StudentName = "Carlos Fonseca"
+                            StudentName = "Kevin Dávila"
                         });
                 });
 #pragma warning restore 612, 618

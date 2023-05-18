@@ -17,18 +17,20 @@ namespace SchoolAPI.Data
                 new Student()
                 {
                     StudentId = 1,
-                    StudentName = "José González"
+                    StudentName = "Moisés Alemán"
                 },
                 new Student()
                 {
                     StudentId = 2,
-                    StudentName = "María José Ramírez"
+                    StudentName = "Marcia Escobar"
                 },
                 new Student()
                 {
                     StudentId = 3,
-                    StudentName = "Carlos Fonseca"
+                    StudentName = "Kevin Dávila"
                 });
         }
+
+
     }
 }
