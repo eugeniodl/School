@@ -17,17 +17,17 @@ namespace SchoolAPI.Data
                 new Student()
                 {
                     StudentId = 1,
-                    StudentName = "José González"
+                    StudentName = "Marcela Padilla"
                 },
                 new Student()
                 {
                     StudentId = 2,
-                    StudentName = "María José Ramírez"
+                    StudentName = "Leonardo Amador"
                 },
                 new Student()
                 {
                     StudentId = 3,
-                    StudentName = "Carlos Fonseca"
+                    StudentName = "Karla Reyes"
                 });
         }
     }
