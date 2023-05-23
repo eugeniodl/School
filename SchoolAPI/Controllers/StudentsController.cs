@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using SchoolAPI.Data;
+using SchoolAPI.Models;
 using SchoolAPI.Models.Dto;
 
 namespace SchoolAPI.Controllers
@@ -20,24 +23,24 @@ namespace SchoolAPI.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<StudentDto>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
             _logger.LogInformation("Obtener los estudiantes");
-            return Ok(_db.Students.ToList());
+            return Ok(await _db.Students.ToListAsync());
         }
 
         [HttpGet("{id:int}", Name ="GetStudent")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<StudentDto> GetStudent(int id)
+        public async Task<ActionResult<StudentDto>> GetStudent(int id)
         {
             if(id == 0)
             {
                 _logger.LogError($"Error al traer Estudiante con Id {id}");
                 return BadRequest();
             }
-            var student = _db.Students.FirstOrDefault(s => s.StudentId == id);
+            var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
 
             if(student == null)
             {
@@ -47,5 +50,124 @@ namespace SchoolAPI.Controllers
 
             return Ok(student);
         }
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult<StudentDto>> AddStudent([FromBody] StudentCreateDto studentDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (await _db.Students.FirstOrDefaultAsync(s => s.StudentName.ToLower() == studentDto.StudentName.ToLower()) != null)
+            {
+                ModelState.AddModelError("NombreExiste", "¡El Estudiante con ese Nombre ya existe!");
+                return BadRequest(ModelState);
+            }
+
+            if (studentDto == null)
+            {
+                return BadRequest(studentDto);
+            }
+
+            Student modelo = new()
+            {
+                StudentName = studentDto.StudentName
+            };
+
+            await _db.Students.AddAsync(modelo);
+            await _db.SaveChangesAsync();
+
+            return CreatedAtRoute("GetStudent", new { id = modelo.StudentId }, modelo);
+
+        }
+
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteStudent(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            _db.Students.Remove(student);
+            await _db.SaveChangesAsync(true);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentUpdateDto studentDTO)
+        {
+            if (studentDTO == null || id != studentDTO.StudentId)
+            {
+                return BadRequest();
+            }
+
+            Student modelo = new()
+            {
+                StudentId = studentDTO.StudentId,
+                StudentName = studentDTO.StudentName
+            };
+
+            _db.Students.Update(modelo);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdatePartialStudent(int id, JsonPatchDocument<StudentUpdateDto> patchDto)
+        {
+            if (patchDto == null || id == 0)
+            {
+                return BadRequest();
+            }
+
+            var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
+
+            StudentUpdateDto studentDto = new()
+            {
+                StudentId = student.StudentId,
+                StudentName = student.StudentName
+            };
+            if (student == null) return BadRequest();
+
+            patchDto.ApplyTo(studentDto, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Student modelo = new()
+            {
+                StudentId = studentDto.StudentId,
+                StudentName = studentDto.StudentName
+            };
+
+            _db.Students.Update(modelo);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
