@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolAPI.Data;
@@ -121,6 +122,41 @@ namespace SchoolAPI.Controllers
                 StudentName = studentUpdateDto.StudentName
             };
 
+            _db.Students.Update(modelo);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdatePartialStudent(int id, JsonPatchDocument<StudentUpdateDto> patchDto)
+        {
+            if (patchDto == null || id == 0)
+            {
+                return BadRequest();
+            }
+            var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
+            StudentUpdateDto studentDto = new()
+            {
+                StudentId = student.StudentId,
+                StudentName = student.StudentName
+            };
+            if (student == null) return BadRequest();
+
+            patchDto.ApplyTo(studentDto, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Student modelo = new()
+            {
+                StudentId = studentDto.StudentId,
+                StudentName = studentDto.StudentName
+            };
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
 
