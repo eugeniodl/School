@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolAPI.Data;
@@ -34,14 +35,14 @@ namespace SchoolAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<StudentDto>> GetStudent(int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 _logger.LogError($"Error al traer Estudiante con Id {id}");
                 return BadRequest();
             }
             var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
 
-            if(student == null)
+            if (student == null)
             {
                 return NotFound();
             }
@@ -54,18 +55,18 @@ namespace SchoolAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<StudentDto>> AddStudent([FromBody] StudentCreateDto studentCreateDto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(await _db.Students.FirstOrDefaultAsync(s => s.StudentName.ToLower() == studentCreateDto.StudentName.ToLower()) != null)
+            if (await _db.Students.FirstOrDefaultAsync(s => s.StudentName.ToLower() == studentCreateDto.StudentName.ToLower()) != null)
             {
                 ModelState.AddModelError("NombreExiste", "¡El Estudiante con ese Nombre ya existe!");
                 return BadRequest(ModelState);
             }
 
-            if(studentCreateDto == null)
+            if (studentCreateDto == null)
             {
                 return BadRequest(studentCreateDto);
             }
@@ -88,13 +89,13 @@ namespace SchoolAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteStudent(int id)
         {
-            if(id == 0)
+            if (id == 0)
             {
                 return BadRequest();
             }
             var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
 
-            if(student == null)
+            if (student == null)
             {
                 return NotFound();
             }
@@ -110,7 +111,7 @@ namespace SchoolAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdateStudent(int id, [FromBody] StudentUpdateDto studentUpdateDto)
         {
-            if(studentUpdateDto == null || id != studentUpdateDto.StudentId)
+            if (studentUpdateDto == null || id != studentUpdateDto.StudentId)
             {
                 return BadRequest();
             }
@@ -121,6 +122,42 @@ namespace SchoolAPI.Controllers
                 StudentName = studentUpdateDto.StudentName
             };
 
+            _db.Students.Update(modelo);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdatePartialStudent(int id, JsonPatchDocument<StudentUpdateDto> patchDto)
+        {
+            if (patchDto == null || id == 0)
+            {
+                return BadRequest();
+            }
+
+            var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
+            StudentUpdateDto studentUpdateDto = new()
+            {
+                StudentId = student.StudentId,
+                StudentName = student.StudentName
+            };
+            if (student == null) return BadRequest();
+
+            patchDto.ApplyTo(studentUpdateDto, ModelState);
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Student modelo = new()
+            {
+                StudentId = studentUpdateDto.StudentId,
+                StudentName = studentUpdateDto.StudentName
+            };
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
 
