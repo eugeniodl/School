@@ -107,5 +107,36 @@ namespace School
                 }
             }
         }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            UpdateStudent();
+        }
+
+        private async void UpdateStudent()
+        {
+            StudentUpdateDto studentDto = new StudentUpdateDto();
+            studentDto.StudentId = id;
+            studentDto.StudentName = txtStudentName.Text;
+
+            using(var client = new HttpClient())
+            {
+                var student = JsonConvert.SerializeObject(studentDto);
+                var content = new StringContent(student, Encoding.UTF8, "application/json");
+                var response = await client.PutAsync(String.Format("{0}/{1}",
+                    "https://localhost:7184/api/Students", id), content);
+                if (response.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante actualizado");
+                else
+                    MessageBox.Show($"Error al actualizar el estudiante: {response.StatusCode}");
+            }
+            Clear();
+            GetAllStudents();
+        }
     }
 }
