@@ -101,6 +101,7 @@
             this.btnModificar.TabIndex = 6;
             this.btnModificar.Text = "Modificar";
             this.btnModificar.UseVisualStyleBackColor = true;
+            this.btnModificar.Click += new System.EventHandler(this.btnModificar_Click);
             // 
             // btnEliminar
             // 
@@ -119,6 +120,7 @@
             this.btnLimpiar.TabIndex = 8;
             this.btnLimpiar.Text = "Limpiar";
             this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // dgvStudents
             // 
@@ -134,6 +136,7 @@
             this.dgvStudents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvStudents.Size = new System.Drawing.Size(800, 272);
             this.dgvStudents.TabIndex = 9;
+            this.dgvStudents.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStudents_CellClick);
             // 
             // frmSchool
             // 

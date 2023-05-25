@@ -26,11 +26,11 @@ namespace School
 
         private async void GetAllStudents()
         {
-            using(var client = new HttpClient())
+            using (var client = new HttpClient())
             {
-                using(var response = await client.GetAsync("https://localhost:7286/api/Student"))
+                using (var response = await client.GetAsync("https://localhost:7286/api/Student"))
                 {
-                    if(response.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
                         var students = await response.Content.ReadAsStringAsync();
                         var displaydata = JsonConvert.DeserializeObject<List<StudentDto>>(students);
@@ -53,7 +53,7 @@ namespace School
         {
             StudentCreateDto oStudent = new StudentCreateDto();
             oStudent.StudentName = txtStudentName.Text;
-            using(var client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 var serializedStudent = JsonConvert.SerializeObject(oStudent);
                 var content = new StringContent(serializedStudent, Encoding.UTF8, "application/json");
@@ -67,9 +67,74 @@ namespace School
             GetAllStudents();
         }
 
+        private static int id = 0;
+
         private void Clear()
         {
-            throw new NotImplementedException();
+            txtStudentId.Text = string.Empty;
+            txtStudentName.Text = string.Empty;
+            id = 0;
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            Clear();
+        }
+
+        private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            foreach (DataGridViewRow row in dgvStudents.Rows)
+            {
+                if (row.Index == e.RowIndex)
+                {
+                    id = int.Parse(row.Cells[0].Value.ToString());
+                    GetStudentById(id);
+                }
+            }
+        }
+
+        private async void GetStudentById(int id)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync(String.Format("{0}/{1}", "https://localhost:7286/api/Student", id));
+                if (response.IsSuccessStatusCode)
+                {
+                    var student = await response.Content.ReadAsStringAsync();
+                    StudentDto studentDto = JsonConvert.DeserializeObject<StudentDto>(student);
+                    txtStudentId.Text = studentDto.StudentId.ToString();
+                    txtStudentName.Text = studentDto.StudentName;
+                }
+                else
+                {
+                    MessageBox.Show($"No se puede obtener el estudiante: {response.StatusCode}");
+                }
+            }
+        }
+
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            UpdateStudent();
+        }
+
+        private async void UpdateStudent()
+        {
+            StudentUpdateDto studentDto = new StudentUpdateDto();
+            studentDto.StudentId = id;
+            studentDto.StudentName = txtStudentName.Text;
+
+            using(var client = new HttpClient())
+            {
+                var student = JsonConvert.SerializeObject(studentDto);
+                var content = new StringContent(student, Encoding.UTF8, "application/json");
+                var response = await client.PutAsync(String.Format("{0}/{1}", "https://localhost:7286/api/Student", id), content);
+                if (response.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante actualizado");
+                else
+                    MessageBox.Show($"Error al actualizar el estudiante: {response.StatusCode}");
+            }
+            Clear();
+            GetAllStudents();
         }
     }
 }
