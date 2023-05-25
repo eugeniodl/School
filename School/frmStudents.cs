@@ -41,5 +41,27 @@ namespace School
                 }
             }
         }
+
+        private void btnAgregar_Click(object sender, EventArgs e)
+        {
+            AddStudent();
+        }
+
+        private async void AddStudent()
+        {
+            StudentCreateDto studentDto = new StudentCreateDto();
+            studentDto.StudentName = txtStudentName.Text;
+
+            using(var client = new HttpClient())
+            {
+                var student = JsonConvert.SerializeObject(studentDto);
+                var content = new StringContent(student, Encoding.UTF8, "application/json");
+                var result = await client.PostAsync("https://localhost:7222/api/Students", content);
+                if (result.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante agregado satifastoriamente");
+                else
+                    MessageBox.Show($"Error al guardar el estudiante: {result.Content.ReadAsStringAsync().Result}");
+            }
+        }
     }
 }
