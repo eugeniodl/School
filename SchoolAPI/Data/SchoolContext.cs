@@ -10,14 +10,28 @@ namespace SchoolAPI.Data
 
         }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Grade> Grades { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Grade>().HasData(
+                new Grade() { 
+                    Id = 1,
+                    GradeName = "Primero",
+                    Section = "A"
+                },
+                new Grade()
+                {
+                    Id = 2,
+                    GradeName = "Primero",
+                    Section = "B"
+                });
             modelBuilder.Entity<Student>().HasData(
                 new Student()
                 {
                     StudentId = 1,
                     StudentName = "José González"
+                    
                 },
                 new Student()
                 {

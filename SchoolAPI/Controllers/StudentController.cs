@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,13 @@ namespace SchoolAPI.Controllers
     {
         private readonly SchoolContext _db;
         private readonly ILogger<StudentController> _logger;
+        private readonly IMapper _mapper;
 
-        public StudentController(ILogger<StudentController> logger, SchoolContext db)
+        public StudentController(ILogger<StudentController> logger, SchoolContext db, IMapper mapper)
         {
             _logger = logger;
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -26,7 +29,11 @@ namespace SchoolAPI.Controllers
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
             _logger.LogInformation("Obtener los Estudiantes");
-            return Ok(await _db.Students.ToListAsync());
+
+            var studentList = await _db.Students.ToListAsync();
+            var resultado = _mapper.Map<IEnumerable<StudentDto>>(studentList);
+
+            return Ok(resultado);
         }
 
         [HttpGet("{id:int}", Name = "GetStudent")]
@@ -41,13 +48,14 @@ namespace SchoolAPI.Controllers
                 return BadRequest();
             }
             var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
+            var resultado = _mapper.Map<StudentDto>(student);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            return Ok(student);
+            return Ok(resultado);
         }
 
         [HttpPost]
