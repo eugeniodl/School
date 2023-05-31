@@ -115,7 +115,8 @@ namespace School
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
-            UpdateStudent();
+            if (id != 0)
+                UpdateStudent();
         }
 
         private async void UpdateStudent()
@@ -124,7 +125,7 @@ namespace School
             studentDto.StudentId = id;
             studentDto.StudentName = txtStudentName.Text;
 
-            using(var client = new HttpClient())
+            using (var client = new HttpClient())
             {
                 var student = JsonConvert.SerializeObject(studentDto);
                 var content = new StringContent(student, Encoding.UTF8, "application/json");
@@ -134,6 +135,28 @@ namespace School
                     MessageBox.Show("Estudiante actualizado");
                 else
                     MessageBox.Show($"Error al actualizar el estudiante: {response.StatusCode}");
+            }
+            Clear();
+            GetAllStudents();
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (id != 0)
+                DeleteStudent();
+        }
+
+        private async void DeleteStudent()
+        {
+            using(var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7184/api/Students");
+                var response = await client.DeleteAsync(String.Format("{0}/{1}",
+                    "https://localhost:7184/api/Students", id));
+                if (response.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante eliminado con éxito");
+                else
+                    MessageBox.Show($"No se pudo eliminar el estudiante: {response.StatusCode}");
             }
             Clear();
             GetAllStudents();
