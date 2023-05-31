@@ -46,6 +46,30 @@ namespace School
 
         private void btnModificar_Click(object sender, EventArgs e)
         {
+            if (id != 0)
+                UpdateStudent();
+        }
+
+        private async void UpdateStudent()
+        {
+            StudentUpdateDto studentDto = new StudentUpdateDto();
+            studentDto.StudentId = id;
+            studentDto.StudentName = txtStudentName.Text;
+
+            using(var client = new HttpClient())
+            {
+                var serializedStudent = JsonConvert.SerializeObject(studentDto);
+                var content = new StringContent(serializedStudent, Encoding.UTF8,
+                    "application/json");
+                var responseMessage = await client.PutAsync(String.Format("{0}/{1}", "https://localhost:7262/api/Students", id), 
+                    content);
+                if (responseMessage.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante actualizado");
+                else
+                    MessageBox.Show($"Error al actualizar el estudiante {responseMessage.StatusCode}");
+            }
+            Clear();
+            GetAllStudents();
 
         }
 
@@ -113,6 +137,32 @@ namespace School
                     MessageBox.Show($"No se puede obtener el estudiante: {response.StatusCode}");
                 }
             }
+        }
+
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (id != 0)
+                DeleteStudent();
+        }
+
+        private async void DeleteStudent()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://localhost:7262/api/Students");
+                var responseMessage = await client.DeleteAsync(String.Format("{0}/{1}", "https://localhost:7262/api/Students", id));
+                if (responseMessage.IsSuccessStatusCode)
+                    MessageBox.Show("Estudiante eliminado con éxito");
+                else
+                    MessageBox.Show($"No se pudo eliminar el estudiante {responseMessage.StatusCode}");
+            }
+            Clear();
+            GetAllStudents();
+        }
+
+        private void btnLimpiar_Click(object sender, EventArgs e)
+        {
+            Clear();
         }
     }
 }

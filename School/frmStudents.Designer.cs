@@ -62,6 +62,7 @@
             // 
             // txtStudentId
             // 
+            this.txtStudentId.Enabled = false;
             this.txtStudentId.Location = new System.Drawing.Point(173, 97);
             this.txtStudentId.Name = "txtStudentId";
             this.txtStudentId.Size = new System.Drawing.Size(125, 27);
@@ -111,6 +112,7 @@
             this.btnEliminar.TabIndex = 7;
             this.btnEliminar.Text = "Eliminar";
             this.btnEliminar.UseVisualStyleBackColor = true;
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
             // 
             // btnLimpiar
             // 
@@ -120,6 +122,7 @@
             this.btnLimpiar.TabIndex = 8;
             this.btnLimpiar.Text = "Limpiar";
             this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // dgvStudents
             // 
