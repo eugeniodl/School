@@ -7,5 +7,8 @@ namespace SchoolAPI.Models.Dto
         [Required]
         [MaxLength(30)]
         public string? StudentName { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        [Required]
+        public int GradeId { get; set; }
     }
 }
