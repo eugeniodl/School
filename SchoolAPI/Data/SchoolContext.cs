@@ -15,33 +15,40 @@ namespace SchoolAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Grade>().HasData(
-                new Grade() { 
+                new Grade()
+                {
                     Id = 1,
                     GradeName = "Primero",
-                    Section = "A"
+                    Section = 'A'
                 },
                 new Grade()
                 {
                     Id = 2,
                     GradeName = "Primero",
-                    Section = "B"
+                    Section = 'B'
                 });
             modelBuilder.Entity<Student>().HasData(
                 new Student()
                 {
                     StudentId = 1,
-                    StudentName = "José González"
-                    
+                    StudentName = "José González",
+                    DateOfBirth = new DateTime(2018, 5, 6),
+                    GradeId = 1
+
                 },
                 new Student()
                 {
                     StudentId = 2,
-                    StudentName = "María José Ramírez"
+                    StudentName = "María José Ramírez",
+                    DateOfBirth = new DateTime(2019, 11, 20),
+                    GradeId = 2
                 },
                 new Student()
                 {
                     StudentId = 3,
-                    StudentName = "Carlos Fonseca"
+                    StudentName = "Carlos Fonseca",
+                    DateOfBirth = new DateTime(2017, 10, 12),
+                    GradeId = 1
                 });
         }
     }

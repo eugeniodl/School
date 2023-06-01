@@ -31,9 +31,8 @@ namespace SchoolAPI.Controllers
             _logger.LogInformation("Obtener los Estudiantes");
 
             var studentList = await _db.Students.ToListAsync();
-            var resultado = _mapper.Map<IEnumerable<StudentDto>>(studentList);
 
-            return Ok(resultado);
+            return Ok(_mapper.Map<IEnumerable<StudentDto>>(studentList));
         }
 
         [HttpGet("{id:int}", Name = "GetStudent")]
@@ -48,14 +47,13 @@ namespace SchoolAPI.Controllers
                 return BadRequest();
             }
             var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
-            var resultado = _mapper.Map<StudentDto>(student);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            return Ok(resultado);
+            return Ok(_mapper.Map<StudentDto>(student));
         }
 
         [HttpPost]
@@ -79,10 +77,12 @@ namespace SchoolAPI.Controllers
                 return BadRequest(studentCreateDto);
             }
 
-            Student modelo = new()
-            {
-                StudentName = studentCreateDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentCreateDto);
+
+            //Student modelo = new()
+            //{
+            //    StudentName = studentCreateDto.StudentName
+            //};
 
             await _db.Students.AddAsync(modelo);
             await _db.SaveChangesAsync();
@@ -124,11 +124,13 @@ namespace SchoolAPI.Controllers
                 return BadRequest();
             }
 
-            Student modelo = new()
-            {
-                StudentId = studentUpdateDto.StudentId,
-                StudentName = studentUpdateDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentUpdateDto);
+
+            //Student modelo = new()
+            //{
+            //    StudentId = studentUpdateDto.StudentId,
+            //    StudentName = studentUpdateDto.StudentName
+            //};
 
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
@@ -147,11 +149,13 @@ namespace SchoolAPI.Controllers
             }
 
             var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
-            StudentUpdateDto studentUpdateDto = new()
-            {
-                StudentId = student.StudentId,
-                StudentName = student.StudentName
-            };
+
+            StudentUpdateDto studentUpdateDto = _mapper.Map<StudentUpdateDto>(student);
+            //StudentUpdateDto studentUpdateDto = new()
+            //{
+            //    StudentId = student.StudentId,
+            //    StudentName = student.StudentName
+            //};
             if (student == null) return BadRequest();
 
             patchDto.ApplyTo(studentUpdateDto, ModelState);
@@ -160,12 +164,12 @@ namespace SchoolAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            Student modelo = new()
-            {
-                StudentId = studentUpdateDto.StudentId,
-                StudentName = studentUpdateDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentUpdateDto);
+            //Student modelo = new()
+            //{
+            //    StudentId = studentUpdateDto.StudentId,
+            //    StudentName = studentUpdateDto.StudentName
+            //};
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
 

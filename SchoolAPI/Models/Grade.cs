@@ -8,8 +8,9 @@ namespace SchoolAPI.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         [Required]
+        [StringLength(50)]
         public string GradeName { get; set; }
         [Required]
-        public string Section { get; set; }
+        public char Section { get; set; }
     }
 }
