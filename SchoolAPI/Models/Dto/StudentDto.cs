@@ -6,7 +6,7 @@ namespace SchoolAPI.Models.Dto
     {
         public int StudentId { get; set; }
         [Required]
-        [MaxLength(30)]
+        [StringLength(50)]
         public string? StudentName { get; set; }
     }
 }
