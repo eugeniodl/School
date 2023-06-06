@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,13 @@ namespace SchoolAPI.Controllers
     {
         private readonly SchoolContext _db;
         private readonly ILogger<StudentsController> _logger;
+        private readonly IMapper _mapper;
 
-        public StudentsController(ILogger<StudentsController> logger, SchoolContext db)
+        public StudentsController(ILogger<StudentsController> logger, SchoolContext db, IMapper mapper)
         {
             _logger = logger;
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -26,7 +29,8 @@ namespace SchoolAPI.Controllers
         public async Task<ActionResult<IEnumerable<StudentDto>>> GetStudents()
         {
             _logger.LogInformation("Obtener los Estudiantes");
-            return Ok(await _db.Students.ToListAsync());
+            var studentList = await _db.Students.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<StudentDto>>(studentList));
         }
 
         [HttpGet("{id:int}", Name = "GetStudent")]
@@ -46,8 +50,7 @@ namespace SchoolAPI.Controllers
             {
                 return NotFound();
             }
-
-            return Ok(student);
+            return Ok(_mapper.Map< StudentDto>(student));
         }
 
         [HttpPost]
@@ -70,11 +73,12 @@ namespace SchoolAPI.Controllers
             {
                 return BadRequest(studentCreateDto);
             }
-
-            Student modelo = new()
-            {
-                StudentName = studentCreateDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentCreateDto);
+            //Student modelo = new()
+            //{
+            //    StudentName = studentCreateDto.StudentName,
+            //    GradeId = studentCreateDto.GradeId
+            //};
 
             await _db.Students.AddAsync(modelo);
             await _db.SaveChangesAsync();
@@ -115,12 +119,12 @@ namespace SchoolAPI.Controllers
             {
                 return BadRequest();
             }
-
-            Student modelo = new()
-            {
-                StudentId = studentUpdateDto.StudentId,
-                StudentName = studentUpdateDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentUpdateDto);
+            //Student modelo = new()
+            //{
+            //    StudentId = studentUpdateDto.StudentId,
+            //    StudentName = studentUpdateDto.StudentName
+            //};
 
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
@@ -138,11 +142,12 @@ namespace SchoolAPI.Controllers
                 return BadRequest();
             }
             var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
-            StudentUpdateDto studentDto = new()
-            {
-                StudentId = student.StudentId,
-                StudentName = student.StudentName
-            };
+            StudentUpdateDto studentDto = _mapper.Map<StudentUpdateDto>(student);
+            //StudentUpdateDto studentDto = new()
+            //{
+            //    StudentId = student.StudentId,
+            //    StudentName = student.StudentName
+            //};
             if (student == null) return BadRequest();
 
             patchDto.ApplyTo(studentDto, ModelState);
@@ -151,12 +156,12 @@ namespace SchoolAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            Student modelo = new()
-            {
-                StudentId = studentDto.StudentId,
-                StudentName = studentDto.StudentName
-            };
+            Student modelo = _mapper.Map<Student>(studentDto);
+            //Student modelo = new()
+            //{
+            //    StudentId = studentDto.StudentId,
+            //    StudentName = studentDto.StudentName
+            //};
             _db.Students.Update(modelo);
             await _db.SaveChangesAsync();
 
