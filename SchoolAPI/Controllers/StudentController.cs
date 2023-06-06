@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SchoolAPI.Data;
 using SchoolAPI.Models;
 using SchoolAPI.Models.Dto;
+using SchoolAPI.Repository.IRepository;
 
 namespace SchoolAPI.Controllers
 {
@@ -13,14 +14,14 @@ namespace SchoolAPI.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly SchoolContext _db;
         private readonly ILogger<StudentController> _logger;
+        private readonly IStudentRepository _studentRepo;
         private readonly IMapper _mapper;
 
-        public StudentController(ILogger<StudentController> logger, SchoolContext db, IMapper mapper)
+        public StudentController(ILogger<StudentController> logger, IStudentRepository studentRepo, IMapper mapper)
         {
             _logger = logger;
-            _db = db;
+            _studentRepo = studentRepo;
             _mapper = mapper;
         }
 
@@ -30,7 +31,7 @@ namespace SchoolAPI.Controllers
         {
             _logger.LogInformation("Obtener los Estudiantes");
 
-            var studentList = await _db.Students.ToListAsync();
+            var studentList = await _studentRepo.GetAll();
 
             return Ok(_mapper.Map<IEnumerable<StudentDto>>(studentList));
         }
@@ -46,7 +47,7 @@ namespace SchoolAPI.Controllers
                 _logger.LogError($"Error al traer Estudiante con Id {id}");
                 return BadRequest();
             }
-            var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
+            var student = await _studentRepo.Get(s => s.StudentId == id);
 
             if (student == null)
             {
@@ -66,7 +67,7 @@ namespace SchoolAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (await _db.Students.FirstOrDefaultAsync(s => s.StudentName.ToLower() == studentCreateDto.StudentName.ToLower()) != null)
+            if (await _studentRepo.Get(s => s.StudentName.ToLower() == studentCreateDto.StudentName.ToLower()) != null)
             {
                 ModelState.AddModelError("NombreExiste", "¡El Estudiante con ese Nombre ya existe!");
                 return BadRequest(ModelState);
@@ -84,8 +85,7 @@ namespace SchoolAPI.Controllers
             //    StudentName = studentCreateDto.StudentName
             //};
 
-            await _db.Students.AddAsync(modelo);
-            await _db.SaveChangesAsync();
+            await _studentRepo.Add(modelo);
 
             return CreatedAtRoute("GetStudent", new { id = modelo.StudentId }, modelo);
 
@@ -101,15 +101,14 @@ namespace SchoolAPI.Controllers
             {
                 return BadRequest();
             }
-            var student = await _db.Students.FirstOrDefaultAsync(s => s.StudentId == id);
+            var student = await _studentRepo.Get(s => s.StudentId == id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            _db.Students.Remove(student);
-            await _db.SaveChangesAsync(true);
+            _studentRepo.Remove(student);
 
             return NoContent();
         }
@@ -132,8 +131,7 @@ namespace SchoolAPI.Controllers
             //    StudentName = studentUpdateDto.StudentName
             //};
 
-            _db.Students.Update(modelo);
-            await _db.SaveChangesAsync();
+            _studentRepo.Update(modelo);
 
             return NoContent();
         }
@@ -148,7 +146,7 @@ namespace SchoolAPI.Controllers
                 return BadRequest();
             }
 
-            var student = await _db.Students.AsNoTracking().FirstOrDefaultAsync(s => s.StudentId == id);
+            var student = await _studentRepo.Get(s => s.StudentId == id, tracked:false);
 
             StudentUpdateDto studentUpdateDto = _mapper.Map<StudentUpdateDto>(student);
             //StudentUpdateDto studentUpdateDto = new()
@@ -170,8 +168,7 @@ namespace SchoolAPI.Controllers
             //    StudentId = studentUpdateDto.StudentId,
             //    StudentName = studentUpdateDto.StudentName
             //};
-            _db.Students.Update(modelo);
-            await _db.SaveChangesAsync();
+            _studentRepo.Update(modelo);
 
             return NoContent();
         }
