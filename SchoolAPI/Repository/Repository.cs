@@ -25,11 +25,11 @@ namespace SchoolAPI.Repository
         public async Task<T> Get(Expression<Func<T, bool>>? filter = null, bool tracked = true)
         {
             IQueryable<T> query = dbSet;
-            if(!tracked)
+            if (!tracked)
             {
                 query = query.AsNoTracking();
             }
-            if(filter != null)
+            if (filter != null)
             {
                 query = query.Where(filter);
             }
@@ -39,9 +39,9 @@ namespace SchoolAPI.Repository
         public async Task<List<T>> GetAll(Expression<Func<T, bool>>? filter = null)
         {
             IQueryable<T> query = dbSet;
-            if(filter != null)
+            if (filter != null)
             {
-                query=query.Where(filter);
+                query = query.Where(filter);
             }
             return await query.ToListAsync();
         }

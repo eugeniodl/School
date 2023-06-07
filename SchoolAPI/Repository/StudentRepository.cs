@@ -14,7 +14,7 @@ namespace SchoolAPI.Repository
         }
         public async Task<Student> Update(Student entity)
         {
-            _db.Students.Add(entity);
+            _db.Students.Update(entity);
             await _db.SaveChangesAsync();
             return entity;
         }
