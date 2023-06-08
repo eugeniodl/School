@@ -111,7 +111,7 @@ namespace SchoolAPI.Controllers
                 return NotFound();
             }
 
-            _studentRepo.Remove(student);
+            await _studentRepo.Remove(student);
 
             return NoContent();
         }
@@ -134,7 +134,7 @@ namespace SchoolAPI.Controllers
             //    StudentName = studentDTO.StudentName
             //};
 
-            _studentRepo.Update(modelo);
+            await _studentRepo.Update(modelo);
 
             return NoContent();
         }
@@ -176,7 +176,7 @@ namespace SchoolAPI.Controllers
             //    StudentName = studentDto.StudentName
             //};
 
-            _studentRepo.Update(modelo);
+            await _studentRepo.Update(modelo);
 
             return NoContent();
         }
