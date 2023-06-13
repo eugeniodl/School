@@ -11,6 +11,7 @@ namespace SchoolAPI.Data
         }
         public DbSet<Student> Students { get; set; }
         public DbSet<Grade> Grades { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,6 +50,17 @@ namespace SchoolAPI.Data
                     StudentName = "Carlos Fonseca",
                     DateOfBirth = new DateTime(2017, 10, 12),
                     GradeId = 1
+                });
+            modelBuilder.Entity<User>().HasData(
+                new User()
+                {
+                    Name = "user1",
+                    Password = "123."
+                },
+                new User()
+                {
+                    Name = "user2",
+                    Password = "123."
                 });
         }
     }
