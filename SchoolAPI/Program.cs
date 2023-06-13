@@ -3,6 +3,8 @@ using SchoolAPI;
 using SchoolAPI.Data;
 using SchoolAPI.Repository.IRepository;
 using SchoolAPI.Repository;
+using Microsoft.AspNetCore.Authentication;
+using SchoolAPI.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,9 @@ builder.Services.AddDbContext<SchoolContext>(option =>
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("BasicAuthentication", null);
 
 var app = builder.Build();
 
@@ -32,7 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
