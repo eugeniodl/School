@@ -54,13 +54,17 @@ namespace SchoolAPI.Data
             modelBuilder.Entity<User>().HasData(
                 new User()
                 {
-                    Name = "user1",
-                    Password = "123."
+                    Id = 1,
+                    Name = "administrator",
+                    Password = "123.",
+                    Role = "Administrador"
                 },
                 new User()
                 {
-                    Name = "user2",
-                    Password = "123."
+                    Id = 2,
+                    Name = "teacher",
+                    Password = "123.",
+                    Role = "Docente"
                 });
         }
     }
