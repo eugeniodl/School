@@ -1,4 +1,6 @@
-﻿using SchoolAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using SchoolAPI.Data;
+using SchoolAPI.Models;
 using SchoolAPI.Repository.IRepository;
 
 namespace SchoolAPI.Repository
@@ -10,6 +12,11 @@ namespace SchoolAPI.Repository
         public UserRepository(SchoolContext db)
         {
             _db = db;
+        }
+
+        public async Task<User> GetUser(string username, string pass)
+        {
+            return await _db.Users.FirstOrDefaultAsync(u => u.Name == username && u.Password == pass);
         }
 
         public bool IsUser(string username, string pass)

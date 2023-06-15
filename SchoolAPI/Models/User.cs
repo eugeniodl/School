@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SchoolAPI.Models
+﻿namespace SchoolAPI.Models
 {
     public class User
     {
