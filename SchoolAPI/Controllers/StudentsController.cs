@@ -91,8 +91,10 @@ namespace SchoolAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles ="Administrator")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteStudent(int id)
         {
